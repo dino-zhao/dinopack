@@ -93,7 +93,6 @@ class Compiler {
       // 只需要依次判断每个对应的文件是否存在即可
      console.log('导出无变化，无需重新打包')
     } else {
-      debugger
       // 缓存未能命中
       // 获取输出文件路径
       const outputFile = path.join(this.distPath, this.distName);
@@ -113,7 +112,6 @@ class Compiler {
         }
       });
       // 将缓存信息写入缓存文件
-     
       fs.writeFileSync(resolve(this.distPath, 'manifest.json'), JSON.stringify(assets, null, 2))
     }
   }

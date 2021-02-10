@@ -1,2 +1,2 @@
 import {log} from './print'
-log('4444444')
+log('5525')

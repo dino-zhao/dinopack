@@ -31,7 +31,7 @@
 
 var _print = __webpack_require__("./src\\print.js");
 
-(0, _print.log)('4444444');`
+(0, _print.log)('5525');`
              );
          }),
      
