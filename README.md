@@ -1,1 +1,1 @@
-模仿webpack实现简单的打包功能
+模仿webpack实现简单的打包功能，本项目复用了[jerkpack](https://github.com/XHFkindergarten/jerkpack)部分代码
