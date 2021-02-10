@@ -21,7 +21,7 @@
       return module.exports;
   }
   // Load entry module and return exports
-  return __webpack_require__(__webpack_require__.s = "./src\index.js");
+  return __webpack_require__("./src\index.js");
 })({
  
      "./src\index.js":
@@ -31,7 +31,7 @@
 
 var _print = __webpack_require__("./src\\print.js");
 
-(0, _print.log)('5525');`
+(0, _print.log)('555');`
              );
          }),
      

@@ -56,7 +56,6 @@ module.exports = class Compilation {
     const [ sourceCode, md5Hash ] = await this.loaderParse(sourcePath)
     const modulePath = getRootPath(this.root, sourcePath, this.root)
     // 获取模块编译后的代码和模块内的依赖数组
-    debugger
     const [ moduleCode, relyInModule ] = this.parse(sourceCode, path.dirname(modulePath))
     // 将模块代码放入ModuleMap
     this.moduleMap[modulePath] = moduleCode
