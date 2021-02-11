@@ -1,8 +1,3 @@
-/*
- * @author: 风魔小次郎
- * @Date: 2020-06-27 15:18:20
- * @desc: Compilation类，编译过程中真正干活的类
- */ 
 
 
 const fs = require('fs')

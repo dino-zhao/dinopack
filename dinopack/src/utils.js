@@ -1,8 +1,4 @@
-/*
- * @author: 风魔小次郎
- * @Date: 2020-06-27 15:34:09
- * @desc: 工具类
- */ 
+
 const path = require('path')
 const fs = require('fs')
 const crypto = require('crypto')
