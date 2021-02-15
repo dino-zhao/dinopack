@@ -1,4 +1,21 @@
+function memoize(fn) {
+    var cachedArg;
+    var cachedResult;
+    return function(arg) {
+      if (cachedArg === arg) {
+        return cachedResult;
+      }
+      cachedArg = arg;
+      cachedResult = fn(arg);
+      return cachedResult;
+    };
+  }
+  
+  var MemoizedNameBox = memoize(NameBox);
+  
 function NameBox(name) {
+//标记是否执行
+  console.log('正在执行')
   return { fontWeight: 'bold', labelContent: name };
 }
 
@@ -11,7 +28,7 @@ function FancyBox(children) {
 
 function FancyNameBox(user, likes, onClick) {
     return FancyBox([
-      'Name: ', NameBox(user.firstName + ' ' + user.lastName),
+      'Name: ', MemoizedNameBox(user.firstName + ' ' + user.lastName),
       'Likes: ', likes,
       LikeButton(onClick)
     ]);
@@ -24,7 +41,6 @@ function FancyNameBox(user, likes, onClick) {
     likes++;
     render();
   }
-  //这里使用定时器模拟交互修改状态
   const LikeButton=(callback)=>{
       if(likes===0){
         setTimeout(callback,3000)
