@@ -3,3 +3,4 @@
 /others目录是一些演示代码
     /react-mental-model 
     /android
+    /algorithm

@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
-    "debug":"node --inspect-brk  build.js"
+    "debug": "node --inspect-brk  build.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "babel-loader": "^8.1.0"
+    "babel-loader": "^8.1.0",
+    "prettier": "^2.2.1"
   },
   "dependencies": {
     "@babel/core": "^7.12.13",
