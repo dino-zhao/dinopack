@@ -13,12 +13,12 @@ module.exports = (arr) => {
   return arr
 }
 //调整以第k个元素为根的子树为大根堆
-const heapAjust = (arr, k, len) => {
+const heapAjust = (arr, k, end) => {
   //arr为原数组，k为指定待调整子树的根节点，len为调整范围，创建大根堆时不是必须的，主要是排序时使用
   //将根节点调整为该子树的最大值
   arr[0] = arr[k] //先把当前子树根节点暂存，随后就可以将该位置用更大的值覆盖
-  for (let i = 2 * k; i <= len; i *= 2) {
-    if (i + 1 < len && arr[i] < arr[i + 1]) {
+  for (let i = 2 * k; i <= end; i *= 2) {
+    if (i < end && arr[i] < arr[i + 1]) {
       //如果有右子树且右子树大于左子树，则用右子树和当前父节点比较
       i += 1
     }
@@ -35,6 +35,7 @@ const heapAjust = (arr, k, len) => {
 //建立大根堆,大根堆中的父节点大于等于子结点
 const buildMaxHeap = (arr) => {
   //将所有的非终端节点，从后往前依次遍历，使以各个节点为根的子树变为大根堆，其中最后一个非终端节点为：不大于序列长度/2的整数
+  //注意条件没用等号，因为0位置是后来补的
   for (let i = Math.floor((arr.length - 1) / 2); i > 0; i--) {
     heapAjust(arr, i, arr.length - 1)
   }
