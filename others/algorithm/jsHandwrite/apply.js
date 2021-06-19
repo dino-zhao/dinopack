@@ -1,4 +1,4 @@
-Function.prototype.apply = function (ctx, arg) {
+Function.prototype.myApply = function (ctx, arg) {
   const context = ctx ?? globalThis
   context.fn = this
   if (Array.isArray(arg)) {
@@ -14,4 +14,4 @@ var obj = {
 function sayName(age) {
   return this.name + age
 }
-console.log(sayName.apply(obj, [12]))
+console.log(sayName.myApply(obj, [12]))
