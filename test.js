@@ -1,13 +1,15 @@
 function sort(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    let max = 0
-    for (let j = 1; j <= i; j++) {
-      if (arr[max] < arr[j]) {
-        max = j
-      }
-    }
-    ;[arr[max], arr[i]] = [arr[i], arr[max]]
+ if(arr.length<2) return arr
+ let mid=Math.floor((arr.length-1)/2)
+ 
+  return merge(sort(arr.slice(0,mid+1)),sort(arr.slice(mid+1,arr.length)))
+}
+function merge(arr1,arr2){
+  let arr=[]
+  while(arr1.length&&arr2.length){
+    arr.push(arr1[0]>arr2[0]?arr2.shift():arr1.shift())
   }
+  arr.push(...(arr1.length?arr1:arr2))
   return arr
 }
 
