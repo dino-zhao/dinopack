@@ -8,6 +8,7 @@ module.exports = (arr) => {
     let l = 0,
       r = arr1.length - 1
     let mid = Math.floor((l + r) / 2)
+    //这个地方第一个参数右侧要加1，否则两个时一直无法分解
     return merge(sort(arr1.slice(l, mid + 1)), sort(arr1.slice(mid + 1, r + 1)))
   }
   function merge(arr1, arr2) {

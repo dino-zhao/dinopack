@@ -9,7 +9,7 @@ module.exports = (arr) => {
       right = r
     while (left < right) {
       //此时第0个位置为空，则遇到右边小于pivot的就移动过来
-      //后面需要等于号，不然永远不会走出循环
+      //后面需要等于号，不然如果有重复数据永远不会走出循环
       while (left < right && arr[right] >= pivot) {
         right--
       }

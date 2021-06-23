@@ -1,8 +1,6 @@
-module.exports = (arr) => {
-  //限制范围
+function sort(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     let max = 0
-    //在范围内找最大值
     for (let j = 1; j <= i; j++) {
       if (arr[max] < arr[j]) {
         max = j
@@ -12,3 +10,30 @@ module.exports = (arr) => {
   }
   return arr
 }
+
+console.log(
+  sort([
+    1,
+    4,
+    52,
+    32,
+    434,
+    4566,
+    0,
+    7,
+    8,
+    54,
+    2,
+    7,
+    1,
+    2,
+    1,
+    1,
+    1,
+    8,
+    23,
+    5,
+    6,
+    5343,
+  ])
+)
