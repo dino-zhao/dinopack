@@ -1,17 +1,18 @@
-const {tree}=require('./others/algorithm/tree/buildTree')
+const {tree}=require('./buildTree')
 function traversalByStack(root){
-    const res = [];
     const stk = [];
     while (root || stk.length) {
         while (root) {
+            // console.log(root.value); //先序
             stk.push(root);
             root = root.left;
         }
         root = stk.pop();
-        res.push(root.value);
+        // console.log(root.value); //中序
         root = root.right;
+        console.log(root)
     }
-    return res;
+
 }
 
-console.log(traversalByStack(tree))
+traversalByStack(tree)
