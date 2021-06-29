@@ -1,12 +1,9 @@
-
-const {tree}=require('./buildTree')
-function dfs(root){
-    if(root===null) return
-    console.log(root.value)
-    dfs(root.left)
-    dfs(root.right)
-    
-   
+const { tree } = require('./buildTree')
+function dfs(root) {
+  if (root === null) return
+  dfs(root.left)
+  dfs(root.right)
+  console.log(root.value)
 }
 
 dfs(tree)
