@@ -11,9 +11,7 @@ function levelOrder(root) {
       node.left && curNodes.push(node.left)
       node.right && curNodes.push(node.right)
     }
-    if (curNodes.length) {
-      cur = curNodes
-    }
+    cur = curNodes
   }
 
   return res

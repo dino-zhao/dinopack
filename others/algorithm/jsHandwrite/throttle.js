@@ -3,19 +3,19 @@
 // 定时器的是第一次触发定时,结果是第一次不执行,最后一次执行
 //这里做一下优化,即添加一个flag标记首次,其他按定时器的行为
 
-function throttle(callback, time) {
+function throttle(fn, time) {
   let timer = null
-  let firstTime = true
+  let isFirst = true
   return function (...args) {
-    if (!timer) {
-      if (firstTime) {
-        callback.apply(this, args)
-        firstTime = false
-      }
-      timer = setTimeout(() => {
-        timer = null
-        callback.apply(this, args)
-      }, time)
+    if(isFirst){
+      fn.apply(this,args)
+      isFirst=false
+  }
+    if(timer===null){
+      timer= setTimeout(()=>{
+          timer=null
+          fn.apply(this,args)
+      },time)
     }
   }
 }

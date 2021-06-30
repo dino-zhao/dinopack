@@ -1,16 +1,17 @@
 const { tree } = require('./others/algorithm/tree/buildTree')
 function traversalByStack(current) {
-  let stk = [],
-    res = []
-  while (current || stk.length) {
-    while (current) {
-      stk.push(current)
-      res.push(current.value)
-      current = current.left
-    }
-    current = stk.shift().right
-  }
-  return res
+ let cur=[current],res=[]
+ while(cur.length){
+     const curNodes=[]
+     while(cur.length){
+         let curNode=cur.shift()
+         res.push(curNode.value)
+         curNode.left&&curNodes.push(curNode.left)
+         curNode.right&&curNodes.push(curNode.right)
+     }
+     cur=curNodes
+ }
+ return res
 }
 
 console.log(traversalByStack(tree))

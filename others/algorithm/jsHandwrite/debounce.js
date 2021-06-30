@@ -1,10 +1,10 @@
 // 防抖，即事件停止触发后一段时间执行，如果这段时间中间再次触发会重新计时
 //返回一个函数，先清除之前遗留的定时器，然后设置新的定时器
-function debounce(callback, time) {
+function debounce(fn, time) {
   timer = null
   return function (...args) {
     clearTimeout(timer)
-    timer = setTimeout(() => callback.apply(this, args), time)
+    timer=setTimeout(fn.bind(this,...args),time)
   }
 }
 let fn = debounce((size) => {
