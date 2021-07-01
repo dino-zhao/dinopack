@@ -1,26 +1,35 @@
-function throttle(fn, time) {
-    let timer = null
-    let isFirst = true
-    return function (...args) {
-        if(isFirst){
-            fn.apply(this,args)
-            isFirst=false
-        }
-      if(timer===null){
-        timer= setTimeout(()=>{
-            timer=null
-            fn.apply(this,args)
-        },time)
-      }
+const PENDDING='pending'
+const FULLFILLED='fullfilled'
+const REJECTED='rejected'
+
+class MyPromise{
+  status=PENDING
+  value=null
+  reason=null
+  constructor(executor){
+    executor(this.resolve,this.reject)
+  }
+
+  resolve(value){
+    if(this.status===PENDDING){
+      this.value=value
+      this.status=FULLFILLED
     }
   }
-  
-  const trigger = throttle((number) => {
-    console.log(number)
-    console.timeLog()
-  }, 2000)
-  setInterval(() => {
-    trigger(1)
-  }, 1000)
-  console.time()
-  
+
+  reject(reason){
+    if(this.status===PENDDING){
+      this.reason=reason
+      this.status=REJECTED
+    }
+  }
+  then(onFullfilled,onRejected){
+    if(this.status===FULLFILLED){
+      onFullfilled(this.value)
+    } else if(this.status===REJECTED){
+      onRejected(this.reason)
+    }
+
+  }
+}
+
