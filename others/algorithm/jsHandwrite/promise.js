@@ -312,5 +312,3 @@ function resolvePromise(promise, x, resolve, reject) {
     resolve(x)
   }
 }
-
-
