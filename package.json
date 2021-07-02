@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
-    "debug": "node --inspect-brk  build.js"
+    "debug": "node --inspect-brk  build.js",
+    "test:promise": "promises-aplus-tests ./others/algorithm/jsHandwrite/promise"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "babel-loader": "^8.1.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "promises-aplus-tests": "^2.1.2"
   },
   "dependencies": {
     "@babel/core": "^7.12.13",
