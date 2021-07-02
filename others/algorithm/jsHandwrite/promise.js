@@ -41,10 +41,7 @@ class MyPromise {
       // 保存成功之后的值
       this.value = value
       // resolve里面将所有成功的回调拿出来执行
-      while (this.onFulfilledCallbacks.length) {
-        // Array.shift() 取出数组第一个元素，然后（）调用，shift不是纯函数，取出后，数组将失去该元素，直到数组为空
-        this.onFulfilledCallbacks.shift()(value)
-      }
+      this.onFulfilledCallbacks.forEach((callback) => callback(value))
     }
   }
 
@@ -57,9 +54,7 @@ class MyPromise {
       // 保存失败后的原因
       this.reason = reason
       // resolve里面将所有失败的回调拿出来执行
-      while (this.onRejectedCallbacks.length) {
-        this.onRejectedCallbacks.shift()(reason)
-      }
+      this.onRejectedCallbacks.forEach((callback) => callback(reason))
     }
   }
 
