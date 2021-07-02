@@ -255,7 +255,8 @@ function resolvePromise(promise, x, resolve, reject) {
     )
   }
   //“promise” is an object or function with a then method whose behavior conforms to this specification https://promisesaplus.com/
-  if (x !== null && (typeof x === 'object' || typeof x === 'function')) {
+  //因为
+  if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
     let then
     try {
       // 把 x.then 赋值给 then
