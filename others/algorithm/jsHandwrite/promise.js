@@ -254,7 +254,7 @@ function resolvePromise(promise, x, resolve, reject) {
       new TypeError('The promise and the return value are the same')
     )
   }
-
+  //“promise” is an object or function with a then method whose behavior conforms to this specification https://promisesaplus.com/
   if (typeof x === 'object' || typeof x === 'function') {
     // 这个坑是跑测试的时候发现的，如果x是null，应该直接resolve
     if (x === null) {
