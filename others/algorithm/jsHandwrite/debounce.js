@@ -4,7 +4,7 @@ function debounce(fn, time) {
   timer = null
   return function (...args) {
     clearTimeout(timer)
-    timer=setTimeout(fn.bind(this,...args),time)
+    timer = setTimeout(fn, times, ...args)
   }
 }
 let fn = debounce((size) => {
@@ -12,6 +12,7 @@ let fn = debounce((size) => {
   console.log(size)
 }, 2000)
 const interval = setInterval(() => {
+  console.log('调用')
   fn(1)
 }, 1000)
 
