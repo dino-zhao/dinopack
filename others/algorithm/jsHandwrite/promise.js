@@ -76,8 +76,8 @@ class MyPromise {
           try {
             // 获取成功回调函数的执行结果
             const x = realOnFulfilled(this.value)
-            // 传入 resolvePromise 集中处理
-            resolvePromise(promise2, x, resolve, reject)
+            // 传入 doResolution 集中处理
+            doResolution(promise2, x, resolve, reject)
           } catch (error) {
             reject(error)
           }
@@ -90,8 +90,8 @@ class MyPromise {
           try {
             // 调用失败回调，并且把原因返回
             const x = realOnRejected(this.reason)
-            // 传入 resolvePromise 集中处理
-            resolvePromise(promise2, x, resolve, reject)
+            // 传入 doResolution 集中处理
+            doResolution(promise2, x, resolve, reject)
           } catch (error) {
             reject(error)
           }
@@ -241,9 +241,10 @@ class MyPromise {
   }
 }
 
-function resolvePromise(promise, x, resolve, reject) {
+function doResolution(promise, x, resolve, reject) {
   // 如果 promise 和 x 指向同一对象，以 TypeError 为据因拒绝执行 promise
   // 这是为了防止死循环
+
   if (promise === x) {
     return reject(
       new TypeError('The promise and the return value are the same')
@@ -263,28 +264,36 @@ function resolvePromise(promise, x, resolve, reject) {
 
     // 如果 then 是函数
     if (typeof then === 'function') {
+      // resolvePromise 和 rejectPromise must not be called more than once.
+      // 这里比如这样一个thenable对象
+      // {
+      //   then: function (resolvePromise) {
+      //     resolvePromise('sentinel')
+      //     resolvePromise('other')
+      //   },
+      // }
       let called = false
       // 将 x 作为函数的作用域 this 调用之
-      // 传递两个回调函数作为参数，第一个参数叫做 resolvePromise ，第二个参数叫做 rejectPromise
-      // 名字重名了，我直接用匿名函数了
+      function resolvePromise(y) {
+        // 如果 resolvePromise 和 rejectPromise 均被调用，
+        // 或者被同一参数调用了多次，则优先采用首次调用并忽略剩下的调用
+        // 实现这条需要前面加一个变量called
+        if (called) return
+        called = true
+        doResolution(promise, y, resolve, reject)
+      }
+      function rejectPromise(r) {
+        if (called) return
+        called = true
+        reject(r)
+      }
       try {
         then.call(
           x,
           // 如果 resolvePromise 以值 y 为参数被调用，则运行 [[Resolve]](promise, y)
-          (y) => {
-            // 如果 resolvePromise 和 rejectPromise 均被调用，
-            // 或者被同一参数调用了多次，则优先采用首次调用并忽略剩下的调用
-            // 实现这条需要前面加一个变量called
-            if (called) return
-            called = true
-            resolvePromise(promise, y, resolve, reject)
-          },
+          resolvePromise,
           // 如果 rejectPromise 以据因 r 为参数被调用，则以据因 r 拒绝 promise
-          (r) => {
-            if (called) return
-            called = true
-            reject(r)
-          }
+          rejectPromise
         )
       } catch (error) {
         // 如果调用 then 方法抛出了异常 e：

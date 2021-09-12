@@ -41,10 +41,7 @@ class MyPromise {
       // 保存成功之后的值
       this.value = value
       // resolve里面将所有成功的回调拿出来执行
-      while (this.onFulfilledCallbacks.length) {
-        // Array.shift() 取出数组第一个元素，然后（）调用，shift不是纯函数，取出后，数组将失去该元素，直到数组为空
-        this.onFulfilledCallbacks.shift()(value)
-      }
+      this.onFulfilledCallbacks.forEach((callback) => callback(value))
     }
   }
 
@@ -57,9 +54,7 @@ class MyPromise {
       // 保存失败后的原因
       this.reason = reason
       // resolve里面将所有失败的回调拿出来执行
-      while (this.onRejectedCallbacks.length) {
-        this.onRejectedCallbacks.shift()(reason)
-      }
+      this.onRejectedCallbacks.forEach((callback) => callback(reason))
     }
   }
 
@@ -81,8 +76,8 @@ class MyPromise {
           try {
             // 获取成功回调函数的执行结果
             const x = realOnFulfilled(this.value)
-            // 传入 resolvePromise 集中处理
-            resolvePromise(promise2, x, resolve, reject)
+            // 传入 doResolution 集中处理
+            doResolution(promise2, x, resolve, reject)
           } catch (error) {
             reject(error)
           }
@@ -96,7 +91,7 @@ class MyPromise {
             // 调用失败回调，并且把原因返回
             const x = realOnRejected(this.reason)
             // 传入 resolvePromise 集中处理
-            resolvePromise(promise2, x, resolve, reject)
+            doResolution(promise2, x, resolve, reject)
           } catch (error) {
             reject(error)
           }
@@ -118,149 +113,20 @@ class MyPromise {
 
     return promise2
   }
-
-  catch(onRejected) {
-    // 只需要进行错误处理
-    this.then(undefined, onRejected)
-  }
-
-  finally(fn) {
-    return this.then(
-      (value) => {
-        return MyPromise.resolve(fn()).then(() => {
-          return value
-        })
-      },
-      (error) => {
-        return MyPromise.resolve(fn()).then(() => {
-          throw error
-        })
-      }
-    )
-  }
-
-  // resolve 静态方法
-  static resolve(parameter) {
-    // 如果传入 MyPromise 就直接返回
-    if (parameter instanceof MyPromise) {
-      return parameter
-    }
-
-    // 转成常规方式
-    return new MyPromise((resolve) => {
-      resolve(parameter)
-    })
-  }
-
-  // reject 静态方法
-  static reject(reason) {
-    return new MyPromise((resolve, reject) => {
-      reject(reason)
-    })
-  }
-
-  static all(promiseList) {
-    return new MyPromise((resolve, reject) => {
-      const result = []
-      const length = promiseList.length
-      let count = 0
-
-      if (length === 0) {
-        return resolve(result)
-      }
-
-      promiseList.forEach((promise, index) => {
-        MyPromise.resolve(promise).then(
-          (value) => {
-            count++
-            result[index] = value
-            if (count === length) {
-              resolve(result)
-            }
-          },
-          (reason) => {
-            reject(reason)
-          }
-        )
-      })
-    })
-  }
-
-  static allSettled = (promiseList) => {
-    return new MyPromise((resolve) => {
-      const length = promiseList.length
-      const result = []
-      let count = 0
-
-      if (length === 0) {
-        return resolve(result)
-      } else {
-        for (let i = 0; i < length; i++) {
-          const currentPromise = MyPromise.resolve(promiseList[i])
-          currentPromise.then(
-            (value) => {
-              count++
-              result[i] = {
-                status: 'fulfilled',
-                value: value,
-              }
-              if (count === length) {
-                return resolve(result)
-              }
-            },
-            (reason) => {
-              count++
-              result[i] = {
-                status: 'rejected',
-                reason: reason,
-              }
-              if (count === length) {
-                return resolve(result)
-              }
-            }
-          )
-        }
-      }
-    })
-  }
-
-  static race(promiseList) {
-    return new MyPromise((resolve, reject) => {
-      const length = promiseList.length
-
-      if (length === 0) {
-        return resolve()
-      } else {
-        for (let i = 0; i < length; i++) {
-          MyPromise.resolve(promiseList[i]).then(
-            (value) => {
-              return resolve(value)
-            },
-            (reason) => {
-              return reject(reason)
-            }
-          )
-        }
-      }
-    })
-  }
 }
 
-function resolvePromise(promise, x, resolve, reject) {
+function doResolution(promise, x, resolve, reject) {
   // 如果 promise 和 x 指向同一对象，以 TypeError 为据因拒绝执行 promise
   // 这是为了防止死循环
+
   if (promise === x) {
     return reject(
       new TypeError('The promise and the return value are the same')
     )
   }
-
-  if (typeof x === 'object' || typeof x === 'function') {
-    // 这个坑是跑测试的时候发现的，如果x是null，应该直接resolve
-    if (x === null) {
-      return resolve(x)
-    }
-
+  //“promise” is an object or function with a then method whose behavior conforms to this specification https://promisesaplus.com/
+  //因为
+  if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
     let then
     try {
       // 把 x.then 赋值给 then
@@ -272,28 +138,30 @@ function resolvePromise(promise, x, resolve, reject) {
 
     // 如果 then 是函数
     if (typeof then === 'function') {
+      // resolvePromise 和 rejectPromise must not be called more than once.
       let called = false
       // 将 x 作为函数的作用域 this 调用之
-      // 传递两个回调函数作为参数，第一个参数叫做 resolvePromise ，第二个参数叫做 rejectPromise
-      // 名字重名了，我直接用匿名函数了
+      function resolvePromise(y) {
+        console.log(y)
+        // 如果 resolvePromise 和 rejectPromise 均被调用，
+        // 或者被同一参数调用了多次，则优先采用首次调用并忽略剩下的调用
+        // 实现这条需要前面加一个变量called
+        if (called) return
+        called = true
+        doResolution(promise, y, resolve, reject)
+      }
+      function rejectPromise(r) {
+        if (called) return
+        called = true
+        reject(r)
+      }
       try {
         then.call(
           x,
           // 如果 resolvePromise 以值 y 为参数被调用，则运行 [[Resolve]](promise, y)
-          (y) => {
-            // 如果 resolvePromise 和 rejectPromise 均被调用，
-            // 或者被同一参数调用了多次，则优先采用首次调用并忽略剩下的调用
-            // 实现这条需要前面加一个变量called
-            if (called) return
-            called = true
-            resolvePromise(promise, y, resolve, reject)
-          },
+          resolvePromise,
           // 如果 rejectPromise 以据因 r 为参数被调用，则以据因 r 拒绝 promise
-          (r) => {
-            if (called) return
-            called = true
-            reject(r)
-          }
+          rejectPromise
         )
       } catch (error) {
         // 如果调用 then 方法抛出了异常 e：
@@ -313,18 +181,28 @@ function resolvePromise(promise, x, resolve, reject) {
   }
 }
 
-let promise = MyPromise.resolve()
-promise
-  .then(() => {
-    console.log(1)
+let p = new MyPromise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(2)
+  }, 3000)
+})
+p.then((res) => {
+  console.log(res)
+  return {
+    then: function (resolvePromise) {
+      resolvePromise('sentinel')
+      resolvePromise('other')
+    },
+  }
+})
+
+MyPromise.deferred = function () {
+  var result = {}
+  result.promise = new MyPromise(function (resolve, reject) {
+    result.resolve = resolve
+    result.reject = reject
   })
-  .then(() => {
-    console.log(2)
-  })
-promise
-  .then(() => {
-    console.log(3)
-  })
-  .then(() => {
-    console.log(4)
-  })
+
+  return result
+}
+module.exports = MyPromise
